@@ -1,12 +1,12 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="submitForm">
+    <!-- <form @submit.prevent="getMedProfiles">
       <div class="search">
         <input type="text" placeholder="Digite para procurar" v-model="query" />
         <button type="button" class="search-button">Procurar</button>
         <button type="button" class="filter-button">Filtrar por:</button>
       </div>
-    </form>
+    </form> -->
     <div class="table">
       <table>
         <thead>
@@ -14,19 +14,26 @@
             <th>ID</th>
             <th>Substância</th>
             <th>CNPJ</th>
+            <th>Laboratório</th>
+            <th>Produto</th>
+            <th>Apresentação</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="med_profile in med_profiles">
+          <tr v-for="med_profile in med_profiles" key="med_profile.profile_id">
             <td>{{ med_profile.profile_id }}</td>
             <td>{{ med_profile.substancia }}</td>
             <td>{{ med_profile.cnpj }}</td>
+            <td>{{ med_profile.laboratorio }}</td>
+            <td>{{ med_profile.produto }}</td>
+            <td>{{ med_profile.apresentacao }}</td>
           </tr>
         </tbody>
       </table>
     </div>
     <div class="pagination">
       <button v-if="showPrevButton" @click="loadPrev()">Página Anterior</button>
+      <label>{{ currentPage }}</label>
       <button v-if="showNextButton" @click="loadNext()">Próxima Página</button>
     </div>
   </div>
@@ -43,7 +50,7 @@ export default {
       showNextButton: false,
       showPrevButton: false,
       currentPage: 1,
-      // query: "",
+      query: "",
     };
   },
   mounted() {
@@ -64,8 +71,7 @@ export default {
 
       await axios
         .get(
-          // &search=${this.query}
-          `http://127.0.0.1:8000/med_profiles/?page=${this.currentPage}`
+          `http://127.0.0.1:8000/med_profiles/?page=${this.currentPage}&search=${this.query}`
         )
         .then((response) => {
           console.log(response.data);
@@ -78,10 +84,6 @@ export default {
           }
         });
     },
-    // submitForm() {
-    //   console.log(this.query);
-    //   this.getMedProfiles();
-    // },
   },
 };
 </script>
@@ -97,10 +99,11 @@ export default {
   justify-content: center;
   margin-top: 40px;
   text-align: center;
+  margin: 0 5px;
 }
 .pagination {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 .search {
   height: 50px;
@@ -120,6 +123,9 @@ export default {
 input {
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
+}
+label {
+  margin: 0px 5px;
 }
 table {
   border-collapse: collapse;
